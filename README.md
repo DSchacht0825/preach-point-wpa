@@ -1,46 +1,88 @@
-# Getting Started with Create React App
+# Preach Point PWA
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A Progressive Web Application for AI-powered sermon summarization and biblical study.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- 🎤 **Real-time Sermon Recording** - Browser-native audio recording
+- 🤖 **AI-Powered Analysis** - Automatic transcription and summarization
+- 📚 **Discovery Bible Study** - Structured study methodology (Observe, Interpret, Apply, Pray)
+- 💡 **Key Takeaways** - Extracted main points and insights
+- 💬 **Discussion Questions** - Generated for small group engagement
+- 📝 **Personal Notes** - Add your own thoughts and reflections
+- 🙏 **Prayer & Action Steps** - Practical application guidance
 
-### `npm start`
+## Premium UI Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Beautiful gradient backgrounds with glass-morphism effects
+- Smooth animations and transitions
+- Responsive design for mobile and desktop
+- Professional tab-based navigation
+- Premium typography and styling
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Quick Start
 
-### `npm test`
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Start Development Server**
+   ```bash
+   npm start
+   ```
 
-### `npm run build`
+3. **Build for Production**
+   ```bash
+   npm run build
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deployment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Option 1: Netlify (Recommended)
+1. Connect your GitHub repository to Netlify
+2. Netlify will automatically detect the build settings from `netlify.toml`
+3. Your app will be deployed at: `https://your-app-name.netlify.app`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Option 2: Vercel
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically detect it's a React app
+3. Your app will be deployed at: `https://your-app-name.vercel.app`
 
-### `npm run eject`
+### Option 3: Manual Upload
+1. Run `npm run build` to create the production build
+2. Upload the `build/` folder to any static hosting service
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## PWA Features
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Installable**: Can be installed as a native app on mobile and desktop
+- **Offline Ready**: Core features work without internet (except AI processing)
+- **Responsive**: Optimized for all screen sizes
+- **Fast Loading**: Optimized bundle size and performance
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Architecture
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Custom CSS with modern features (gradients, backdrop-filter, animations)
+- **Audio**: Web Audio API with MediaRecorder
+- **Storage**: localStorage for sermon history
+- **Backend**: Vercel serverless functions with OpenAI integration
 
-## Learn More
+## Browser Compatibility
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Chrome 88+ (Recommended)
+- Firefox 89+
+- Safari 14.1+
+- Edge 88+
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Development
+
+The app uses modern web APIs:
+- MediaRecorder API for audio recording
+- localStorage for data persistence
+- Fetch API for backend communication
+- CSS Grid and Flexbox for layouts
+
+## License
+
+This project is for demonstration purposes and includes AI-powered features.
