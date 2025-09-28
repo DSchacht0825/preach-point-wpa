@@ -80,21 +80,42 @@ const App: React.FC = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100
+        }
+      });
+
+      // Use the best available audio format
+      let mimeType = 'audio/webm;codecs=opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/mp4';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'audio/wav';
+        }
+      }
+
+      console.log('Using audio format:', mimeType);
+
+      const recorder = new MediaRecorder(stream, { mimeType });
       const chunks: Blob[] = [];
 
       recorder.ondataavailable = (e) => {
-        chunks.push(e.data);
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
       };
 
       recorder.onstop = () => {
-        const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+        const audioBlob = new Blob(chunks, { type: mimeType });
+        console.log('Final audio blob:', audioBlob.size, 'bytes, type:', audioBlob.type);
         processAudio(audioBlob);
         stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start();
+      recorder.start(1000); // Record in 1-second chunks
       setMediaRecorder(recorder);
       setAudioChunks(chunks);
       setIsRecording(true);
@@ -127,11 +148,18 @@ const App: React.FC = () => {
 
   const processAudio = async (audioBlob: Blob) => {
     try {
+      console.log('Starting audio processing...');
+      console.log('Audio blob size:', audioBlob.size, 'bytes');
+      console.log('Audio blob type:', audioBlob.type);
+
       // Convert blob to base64
       const arrayBuffer = await audioBlob.arrayBuffer();
       const uint8Array = new Uint8Array(arrayBuffer);
       const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('');
       const base64Audio = btoa(binaryString);
+
+      console.log('Base64 audio length:', base64Audio.length);
+      console.log('Backend API URL:', BACKEND_API_URL);
 
       // Call backend API
       const response = await fetch(`${BACKEND_API_URL}/process-sermon`, {
@@ -145,11 +173,17 @@ const App: React.FC = () => {
         }),
       });
 
+      console.log('API Response status:', response.status);
+      console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Error response:', errorText);
+        throw new Error(`API Error ${response.status}: ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('API Success response:', result);
 
       const processedSermon: Sermon = {
         ...currentSermon!,
@@ -170,57 +204,10 @@ const App: React.FC = () => {
       setIsProcessing(false);
     } catch (error) {
       console.error('Error processing audio:', error);
-
-      // Fallback content
-      const fallbackSermon: Sermon = {
-        ...currentSermon!,
-        transcription: 'Audio processing temporarily unavailable...',
-        summary: 'This sermon discusses faith and action, emphasizing the importance of living out our beliefs through concrete actions and consistent prayer.',
-        keyTakeaways: [
-          'Faith requires action to be meaningful',
-          'Prayer and works go hand in hand',
-          'We are called to participate in God\'s kingdom',
-          'Belief must translate into behavior',
-          'Spiritual growth comes from practice',
-        ],
-        discussionQuestions: [
-          'How can we better align our actions with our faith?',
-          'What prevents us from acting on our beliefs?',
-          'Share a time when your faith led you to take action',
-          'How can we support each other in living out our faith?',
-          'What role does prayer play in guiding our actions?',
-        ],
-        sermonNotes: `Main Scripture: James 2:17
-
-Key Points:
-1. Faith and Works Partnership
-   - Faith provides foundation
-   - Works demonstrate faith
-   - Both essential for spiritual growth
-
-2. Active Participation in God's Kingdom
-   - Called to serve
-   - Using our gifts
-   - Building community
-
-3. Prayer as Guide for Action
-   - Seeking God's direction
-   - Listening for guidance
-   - Moving in obedience`,
-        actionSteps: [
-          'Pray daily about applying the message',
-          'Read referenced scriptures this week',
-          'Find one way to serve others'
-        ],
-        prayer: 'Lord, help us to be doers of your word and not hearers only. Give us the courage to act on our faith and the wisdom to know how to serve you better. In Jesus\' name, Amen.'
-      };
-
-      const updatedSermons = [fallbackSermon, ...sermons];
-      setSermons(updatedSermons);
-      saveSermons(updatedSermons);
-      setCurrentSermon(fallbackSermon);
-      setSelectedSermon(fallbackSermon);
       setIsProcessing(false);
+
+      // Show real error to user instead of fake content
+      alert(`Failed to process sermon: ${error instanceof Error ? error.message : 'Unknown error'}. Please check your internet connection and try again.`);
     }
   };
 
