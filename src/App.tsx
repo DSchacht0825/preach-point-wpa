@@ -30,8 +30,7 @@ const App: React.FC = () => {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [currentSermon, setCurrentSermon] = useState<Sermon | null>(null);
   const [selectedSermon, setSelectedSermon] = useState<Sermon | null>(null);
-  const [selectedBible, setSelectedBible] = useState('NKJV');
-  const [showBibleSelector, setShowBibleSelector] = useState(false);
+  const [selectedBible] = useState('NKJV');
   const [activeTab, setActiveTab] = useState('summary');
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [, setAudioChunks] = useState<Blob[]>([]);
